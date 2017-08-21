@@ -22,20 +22,29 @@ import java.util.concurrent.Callable;
 //自定义View，用于存放所有方块的布局
 public class GameView extends LinearLayout{
     private Card[][] cardsMap = new Card[4][4];      //二维数组，存放卡片
+    private static GameView gameView;
+
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        gameView = this;
         initGameView();
     }
 
     public GameView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        gameView = this;
         initGameView();
     }
 
     public GameView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        gameView = this;
         initGameView();
+    }
+
+    public static GameView getGameView() {
+        return gameView;
     }
 
     //往左滑动时

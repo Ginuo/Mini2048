@@ -8,19 +8,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/topFrame" >
+        android:background="#EDC53F" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Score:"
+            android:textColor="#F4F6F2"
+            android:layout_marginLeft="100dp"
             android:textSize="36sp"/>
         <TextView
             android:id="@+id/showScore"
             android:layout_width="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="#F4F6F2"
             android:layout_height="wrap_content"
-            android:textSize="32sp"/>
+            android:textSize="36sp"/>
+
     </LinearLayout>
+
+    <Button
+        android:id="@+id/restart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="#8F7A66"
+        android:textSize="24sp"
+        android:textColor="#F4F6F2"
+        android:text="重新开始"/>
+
 
     <com.ginuo.www.mini2048.GameView
         android:id="@+id/gameGrid"
@@ -28,6 +44,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@color/colorAccent">
-
     </com.ginuo.www.mini2048.GameView>
+
+
 </LinearLayout>
