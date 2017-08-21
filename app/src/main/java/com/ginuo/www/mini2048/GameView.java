@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * Created by Administrator on 2017/8/20.
@@ -62,6 +63,7 @@ public class GameView extends LinearLayout{
                     if(x != 0) {
                         cardsMap[row][i].setNum(x * 2);
                         cardsMap[row][i + 1].setNum(0);
+                        MainActivity.getMainActivity().addScore(cardsMap[row][i].getNum());
                     }
                 }
             }
@@ -80,6 +82,7 @@ public class GameView extends LinearLayout{
         }
         //if(hasMoved)
             addRandomNum();
+            checkCompleted();
     }
 
     //往右滑动时
@@ -108,6 +111,7 @@ public class GameView extends LinearLayout{
                     if(x != 0) {
                         cardsMap[row][i].setNum(x * 2);
                         cardsMap[row][i - 1].setNum(0);
+                        MainActivity.getMainActivity().addScore(cardsMap[row][i].getNum());
                     }
                 }
             }
@@ -127,6 +131,7 @@ public class GameView extends LinearLayout{
         }
         //if(hasMoved)       //仅在有方块被移动了才出现新的方块
             addRandomNum();
+            checkCompleted();
     }
 
     //上滑
@@ -157,6 +162,7 @@ public class GameView extends LinearLayout{
                     if(x != 0) {
                         cardsMap[i][col].setNum(x * 2);
                         cardsMap[i+1][col].setNum(0);
+                        MainActivity.getMainActivity().addScore(cardsMap[i][col].getNum());
                     }
                 }
             }
@@ -175,6 +181,7 @@ public class GameView extends LinearLayout{
         }
         //if(hasMoved)
             addRandomNum();
+            checkCompleted();
     }
 
     //下滑
@@ -203,6 +210,7 @@ public class GameView extends LinearLayout{
                     if(x != 0) {
                         cardsMap[i][col].setNum(x * 2);
                         cardsMap[i-1][col].setNum(0);
+                        MainActivity.getMainActivity().addScore(cardsMap[i][col].getNum());
                     }
                 }
             }
@@ -220,8 +228,10 @@ public class GameView extends LinearLayout{
             }
 
         }
+
         //if(hasMoved)       //仅在有方块被移动了才出现新的方块
             addRandomNum();
+            checkCompleted();
     }
 
     //主要用于设置对手势（滑动方向）的监听，并根据滑动方向产生动作
@@ -308,7 +318,31 @@ public class GameView extends LinearLayout{
         }
     }
 
+    public void checkCompleted(){
+        boolean finished = true;
+        for(int i = 0; i < 4; i++){    //先遍历中间的2×2张卡片，并与其上下左右对比
+            for(int j = 0; j < 4; j++){
+                Card center = cardsMap[i][j];
+                if(center.getNum() <= 0)    finished = false;
+                else{
+                    if(i-1 >= 0 && (cardsMap[i-1][j].getNum() == 0 || cardsMap[i][j].equals(cardsMap[i-1][j])))
+                        finished = false;
+                    if(i+1 < 4 && (cardsMap[i+1][j].getNum() == 0 || cardsMap[i][j].equals(cardsMap[i+1][j])))
+                        finished = false;
+                    if(j-1 >= 0 && (cardsMap[i][j-1].getNum() == 0 || cardsMap[i][j].equals(cardsMap[i][j-1])))
+                        finished = false;
+                    if(j+1 < 4 && (cardsMap[i][j+1].getNum() == 0 || cardsMap[i][j].equals(cardsMap[i][j+1])))
+                        finished = false;
+                }
+            }
+        }
+        if(finished){
+            Log.d("GameView","Game Over");
+        }
+    }
+
     public void startGame(){
+
         for(int i = 0; i < 4; i++){
             for(int j = 0; j < 4; j++){
                 cardsMap[i][j].setNum(0);     //重置
@@ -316,6 +350,7 @@ public class GameView extends LinearLayout{
         }
         addRandomNum();              //给两个位置添加随机值
         addRandomNum();
+
     }
 
     public void addRandomNum(){
@@ -327,8 +362,10 @@ public class GameView extends LinearLayout{
                     coordinate.add(new Point(i,j));
             }
         }
-        Point p = coordinate.remove((int)(Math.random() * coordinate.size()));
-        cardsMap[p.x][p.y].setNum(Math.random() > 0.1 ? 2 : 4);     //random()生成
+        if(!coordinate.isEmpty()){
+            Point p = coordinate.remove((int)(Math.random() * coordinate.size()));
+            cardsMap[p.x][p.y].setNum(Math.random() > 0.1 ? 2 : 4);     //random()生成
+        }
     }
 
 
