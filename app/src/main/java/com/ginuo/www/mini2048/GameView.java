@@ -1,7 +1,9 @@
 package com.ginuo.www.mini2048;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -38,7 +40,8 @@ public class GameView extends LinearLayout{
 
     //往左滑动时
     public void swipeLeft(){
-        boolean hasMoved = false;   //****待处理，只有存在移动了的卡片时（不一定要合并了）才能出现新的卡片
+        Card old[][] = getOldCards();  //保存原来的卡片，用于比较是否有移动
+        boolean hasMoved = false;   //只有存在移动了的卡片时（不一定要合并了）才能出现新的卡片
         //将各行非零的元素都挤到左边
         for(int row = 0; row < 4; row++){
             int tmp[] = new int[4];      //按顺序保存下当前行中的非零的元素
@@ -61,6 +64,7 @@ public class GameView extends LinearLayout{
                 if(cardsMap[row][i+1].equals(cardsMap[row][i])){
                     int x = cardsMap[row][i].getNum();
                     if(x != 0) {
+                        hasMoved = true;
                         cardsMap[row][i].setNum(x * 2);
                         cardsMap[row][i + 1].setNum(0);
                         MainActivity.getMainActivity().addScore(cardsMap[row][i].getNum());
@@ -76,17 +80,24 @@ public class GameView extends LinearLayout{
                 if(cardsMap[row][i].getNum() != 0)
                     tmp[index++] = cardsMap[row][i].getNum();
             for(int i = 0; i < 4; i++){
-                if(i < index)   cardsMap[row][i].setNum(tmp[i]);
+                if(i < index){
+                    cardsMap[row][i].setNum(tmp[i]);
+                }
                 else    cardsMap[row][i].setNum(0);
+                if(! cardsMap[row][i].equals(old[row][i]))
+                    hasMoved = true;
+                Log.d("old", "old:"+old[row][i].getNum()+"  new:"+cardsMap[row][i].getNum());
             }
         }
-        //if(hasMoved)
+        if(hasMoved){
             addRandomNum();
             checkCompleted();
+        }
     }
 
     //往右滑动时
     public void swipeRight(){
+        Card old[][] = getOldCards();
         boolean hasMoved = false;
         //将各行非零的元素都挤到右边
         for(int row = 0; row < 4; row++){
@@ -109,6 +120,7 @@ public class GameView extends LinearLayout{
                 if(cardsMap[row][i-1].equals(cardsMap[row][i])){
                     int x = cardsMap[row][i].getNum();
                     if(x != 0) {
+                        hasMoved = true;      //******
                         cardsMap[row][i].setNum(x * 2);
                         cardsMap[row][i - 1].setNum(0);
                         MainActivity.getMainActivity().addScore(cardsMap[row][i].getNum());
@@ -124,18 +136,26 @@ public class GameView extends LinearLayout{
                 if(cardsMap[row][i].getNum() != 0)
                     tmp[index--] = cardsMap[row][i].getNum();
             for(int i = 3; i >= 0; i--){
-                if( i > index)   cardsMap[row][i].setNum(tmp[i]);
+                if( i > index){
+                    cardsMap[row][i].setNum(tmp[i]);
+                }
                 else    cardsMap[row][i].setNum(0);
+                if(! cardsMap[row][i].equals(old[row][i]))
+                    hasMoved = true;
             }
 
         }
-        //if(hasMoved)       //仅在有方块被移动了才出现新的方块
+        if(hasMoved){
+            //仅在有方块被移动了才出现新的方块
             addRandomNum();
             checkCompleted();
+        }
+
     }
 
     //上滑
     public void swipeUp(){
+        Card old[][] = getOldCards();
         boolean hasMoved = false;   //****待处理，只有存在移动了的卡片时（不一定要合并了）才能出现新的卡片
         //将各行非零的元素都挤到左边
         for(int col = 0; col < 4; col++){
@@ -160,6 +180,7 @@ public class GameView extends LinearLayout{
                 if(cardsMap[i+1][col].equals(cardsMap[i][col])){
                     int x = cardsMap[i][col].getNum();
                     if(x != 0) {
+                        hasMoved= true;
                         cardsMap[i][col].setNum(x * 2);
                         cardsMap[i+1][col].setNum(0);
                         MainActivity.getMainActivity().addScore(cardsMap[i][col].getNum());
@@ -175,17 +196,23 @@ public class GameView extends LinearLayout{
                 if(cardsMap[i][col].getNum() != 0)
                     tmp[index++] = cardsMap[i][col].getNum();
             for(int i = 0; i < 4; i++){
-                if(i < index)   cardsMap[i][col].setNum(tmp[i]);
+                if(i < index){
+                    cardsMap[i][col].setNum(tmp[i]);
+                }
                 else    cardsMap[i][col].setNum(0);
+                if(!cardsMap[i][col].equals(old[i][col]))
+                    hasMoved = true;
             }
         }
-        //if(hasMoved)
+        if(hasMoved){
             addRandomNum();
             checkCompleted();
+        }
     }
 
     //下滑
     public void swipeDown(){
+        Card old[][] = getOldCards();
         boolean hasMoved = false;
         //将各行非零的元素都挤到下边
         for(int col = 0; col < 4; col++){
@@ -208,6 +235,7 @@ public class GameView extends LinearLayout{
                 if(cardsMap[i-1][col].equals(cardsMap[i][col])){
                     int x = cardsMap[i][col].getNum();
                     if(x != 0) {
+                        hasMoved = true;      //一、有合并
                         cardsMap[i][col].setNum(x * 2);
                         cardsMap[i-1][col].setNum(0);
                         MainActivity.getMainActivity().addScore(cardsMap[i][col].getNum());
@@ -223,15 +251,20 @@ public class GameView extends LinearLayout{
                 if(cardsMap[i][col].getNum() != 0)
                     tmp[index--] = cardsMap[i][col].getNum();
             for(int i = 3; i >= 0; i--){
-                if( i > index)   cardsMap[i][col].setNum(tmp[i]);
+                if( i > index){
+                    cardsMap[i][col].setNum(tmp[i]);
+                }
                 else    cardsMap[i][col].setNum(0);
+                if(!cardsMap[i][col].equals(old[i][col]))     //二、与原位置不同
+                    hasMoved = true;
             }
 
         }
 
-        //if(hasMoved)       //仅在有方块被移动了才出现新的方块
+        if(hasMoved){
             addRandomNum();
             checkCompleted();
+        }
     }
 
     //主要用于设置对手势（滑动方向）的监听，并根据滑动方向产生动作
@@ -318,6 +351,20 @@ public class GameView extends LinearLayout{
         }
     }
 
+    public Card[][] getOldCards(){
+        Card old[][] = new Card[4][4];
+        Card c;
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                int num = cardsMap[i][j].getNum();
+                c = new Card(getContext());
+                c.setNum(num);
+                old[i][j] = c;
+            }
+        }
+        return old;
+    }
+
     public void checkCompleted(){
         boolean finished = true;
         for(int i = 0; i < 4; i++){    //先遍历中间的2×2张卡片，并与其上下左右对比
@@ -338,6 +385,24 @@ public class GameView extends LinearLayout{
         }
         if(finished){
             Log.d("GameView","Game Over");
+            AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.getMainActivity());
+            dialog.setTitle("游戏结束");
+            dialog.setMessage("是否重新开始？");
+            dialog.setCancelable(false);
+            dialog.setPositiveButton("重新开始", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startGame();
+                    MainActivity.getMainActivity().clearScore();
+                }
+            });
+            dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            dialog.show();
         }
     }
 

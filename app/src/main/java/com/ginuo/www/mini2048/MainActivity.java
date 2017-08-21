@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.widget.TextView;
 
+
 public class MainActivity extends Activity {
     private TextView showScore;
     private int score;
@@ -33,6 +34,10 @@ public class MainActivity extends Activity {
         showScore.setText(_score+"");
     }
 
+    public void clearScore(){
+        score = 0;
+        show_score(score);
+    }
 
     public void addScore(int increment){
         score += increment;

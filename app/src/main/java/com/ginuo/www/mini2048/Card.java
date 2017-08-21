@@ -55,8 +55,56 @@ public class Card extends FrameLayout {
         this.num = num;
         if(num <= 0){
             label.setText("");
+            label.setBackgroundColor(0xFFCDC0B4);
         }else{
             label.setText(num+"");      //显示数字
+            switch (num % 2049){         //根据不同的数字设置label的颜色，2048为一轮
+                case 2:
+                    label.setBackgroundColor(0xFFEEE4DA);
+                    label.setTextColor(0xFF776E65);
+                    break;
+                case 4:
+                    label.setBackgroundColor(0xFFEDE0C8);
+                    label.setTextColor(0xFF776E65);
+                    break;
+                case 8:
+                    label.setBackgroundColor(0xFFF2BE79);
+                    label.setTextColor(0xFFF9F6F2);
+                    break;
+                case 16:
+                    label.setBackgroundColor(0xFFF59563);
+                    label.setTextColor(0xFFF9F6F2);
+                    break;
+                case 32:
+                    label.setBackgroundColor(0xFFF67C5F);
+                    label.setTextColor(0xFFF9F6F2);
+                    break;
+                case 64:
+                    label.setBackgroundColor(0xFFF65F39);
+                    label.setTextColor(0xFFF9F6F2);
+                    break;
+                case 128:
+                    label.setBackgroundColor(0xFFEECF72);
+                    label.setTextColor(0xFFF9F6F2);
+                    break;
+                case 256:
+                    label.setBackgroundColor(0xFFECCB60);
+                    label.setTextColor(0xFFF9F6F2);
+                    break;
+                case 512:
+                    label.setBackgroundColor(0xFFECC750);
+                    label.setTextColor(0xFFF9F6F2);
+                    break;
+                case 1024:
+                    label.setBackgroundColor(0xFFECC440);
+                    label.setTextColor(0xFFF9F6F2);
+                    break;
+                case 2048:
+                    label.setBackgroundColor(0xFFEDC42E);
+                    label.setTextColor(0xFFF9F6F2);
+                    break;
+            }
+
         }
 
     }
